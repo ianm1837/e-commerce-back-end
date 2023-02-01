@@ -7,12 +7,21 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 router.get('/', (req, res) => {
   // find all products
   // be sure to include its associated Category and Tag data
+  Product.findAll({
+    include: [{ model: Tag }, { model: Category }],
+  }).then((data) => res.json(data));
 });
 
 // get one product
 router.get('/:id', (req, res) => {
   // find a single product by its `id`
   // be sure to include its associated Category and Tag data
+  Product.findAll({
+    where: {
+      id: req.params.id,
+    },
+    include: [{ model: Tag }, { model: Category }],
+  }).then((data) => res.json(data));
 });
 
 // create new product
@@ -50,47 +59,86 @@ router.post('/', (req, res) => {
 // update product
 router.put('/:id', (req, res) => {
   // update product data
-  Product.update(req.body, {
-    where: {
-      id: req.params.id,
-    },
-  })
-    .then((product) => {
-      // find all associated tags from ProductTag
-      return ProductTag.findAll({ where: { product_id: req.params.id } });
+  if (req.body.tag_id) {
+    Product.update(req.body, {
+      where: {
+        id: req.params.id,
+      },
     })
-    .then((productTags) => {
-      // get list of current tag_ids
-      const productTagIds = productTags.map(({ tag_id }) => tag_id);
-      // create filtered list of new tag_ids
-      const newProductTags = req.body.tagIds
-        .filter((tag_id) => !productTagIds.includes(tag_id))
-        .map((tag_id) => {
-          return {
-            product_id: req.params.id,
-            tag_id,
-          };
-        });
-      // figure out which ones to remove
-      const productTagsToRemove = productTags
-        .filter(({ tag_id }) => !req.body.tagIds.includes(tag_id))
-        .map(({ id }) => id);
+      .then((product) => {
+        // find all associated tags from ProductTag
+        return ProductTag.findAll({ where: { product_id: req.params.id } });
+      })
+      .then((productTags) => {
+        // get list of current tag_ids
+        const productTagIds = productTags.map(({ tag_id }) => tag_id);
+        // create filtered list of new tag_ids
+        const newProductTags = req.body.tagIds
+          .filter((tag_id) => !productTagIds.includes(tag_id))
+          .map((tag_id) => {
+            return {
+              product_id: req.params.id,
+              tag_id,
+            };
+          });
+        // figure out which ones to remove
+        const productTagsToRemove = productTags
+          .filter(({ tag_id }) => !req.body.tagIds.includes(tag_id))
+          .map(({ id }) => id);
 
-      // run both actions
-      return Promise.all([
-        ProductTag.destroy({ where: { id: productTagsToRemove } }),
-        ProductTag.bulkCreate(newProductTags),
-      ]);
-    })
-    .then((updatedProductTags) => res.json(updatedProductTags))
-    .catch((err) => {
-      // console.log(err);
-      res.status(400).json(err);
-    });
+        // run both actions
+        return Promise.all([
+          ProductTag.destroy({ where: { id: productTagsToRemove } }),
+          ProductTag.bulkCreate(newProductTags),
+        ]);
+      })
+      .then((updatedProductTags) => res.json(updatedProductTags))
+      .catch((err) => {
+        // console.log(err);
+        res.status(400).json(err);
+      });
+  }
+  if (req.body.price) {
+    Product.update(
+      { product_name: req.body.product_name },
+      {
+        where: {
+          id: req.params.id,
+        },
+      }
+    ).then((data) => res.json(data).catch((err) => res.status(400).json(err)));
+  }
+  if (req.body.stock) {
+    Product.update(
+      { stock: req.body.stock },
+      {
+        where: {
+          id: req.params.id,
+        },
+      }
+    ).then((data) => res.json(data).catch((err) => res.status(400).json(err)));
+  }
+  if (req.body.category_id) {
+    Product.update(
+      { category_id: req.body.category_id },
+      {
+        where: {
+          id: req.params.id,
+        },
+      }
+    ).then((data) => res.json(data).catch((err) => res.status(400).json(err)));
+  }
 });
 
 router.delete('/:id', (req, res) => {
   // delete one product by its `id` value
+  Product.destroy({
+    where: {
+      id: req.params.id,
+    },
+  }).then(function (data) {
+    res.json(data);
+  });
 });
 
 module.exports = router;

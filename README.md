@@ -1,29 +1,45 @@
-AS A manager at an internet retail company
-I WANT a back end for my e-commerce website that uses the latest technologies
-SO THAT my company can compete with other e-commerce companies
+# e-commerce-back-end
 
-GIVEN a functional Express.js API
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-WHEN I add my database name, MySQL username, and MySQL password to an environment variable file
+## Description
 
-✅ THEN I am able to connect to a database using Sequelize
+This is a simple back end API for managing products for an online shop.
 
+Video demonstration:
 
-WHEN I enter schema and seed commands
-
-✅ THEN a development database is created and is seeded with test data
+https://youtu.be/wIWYVnlAPZE
 
 
-WHEN I enter the command to invoke the application
+## Table of Contents
 
-✅ THEN my server is started and the Sequelize models are synced to the MySQL database
+- [e-commerce-back-end](#e-commerce-back-end)
+  - [Description](#description)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [License](#license)
+  - [Questions](#questions)
+
+## Installation
+
+- Create Database in MySQL
+- create .env file using provided example with MySQL information
+- Run `npm i`
+
+## Usage
+
+Run `npm start` to start listening for API calls.
+
+## License
+
+Licensed under the MIT license.
+https://opensource.org/licenses/MIT
 
 
-WHEN I open API GET routes in Insomnia Core for categories, products, or tags
+## Questions
 
-✅ THEN the data for each of these routes is displayed in a formatted JSON
+For Questions, please open an issue on this repo.
 
+Visit my github: [ianm1837](https://www.github.com/ianm1837)
 
-WHEN I test API POST, PUT, and DELETE routes in Insomnia Core
-
-THEN I am able to successfully create, update, and delete data in my database
